@@ -1,8 +1,6 @@
 import 'dotenv/config';
 import { query } from '@anthropic-ai/claude-agent-sdk';
 
-async function main(prompt) {
-  try {
     console.log('🎯 Starting Locus Claude SDK application...\n');
 
     // 1. Configure MCP connection to Locus
@@ -41,6 +39,9 @@ async function main(prompt) {
     };
 
     console.log('✓ MCP configured\n');
+
+async function main(prompt) {
+  try {
 
     // 2. Run a query that uses MCP tools
 
