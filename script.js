@@ -24,24 +24,31 @@ if (SpeechRecognition) {
   button.ontouchstart = () => recognition.start();  // mobile support
   
   function handleInput(){
+    output.textContent = "Message received, processing ...";
     let call = new XMLHttpRequest();
-    call.open("POST", URL, false);
-    let payload = {
-        query: userInput
-    };
+    call.open("POST", URL); // async by default
+
     call.setRequestHeader("Content-Type", "application/json");
-    call.send(JSON.stringify(payload));
-    let resp = call.responseText;
-    output.textContent = JSON.parse(resp).locusResp;
-  }
+
+    call.onload = () => {
+        if (call.status >= 200 && call.status < 300) {
+            let resp = JSON.parse(call.responseText);
+            output.textContent = resp.locusResp;
+        } else {
+            output.textContent = 'Error: ' + call.statusText;
+        }
+    };
+
+    call.onerror = () => {
+        output.textContent = 'Network error occurred';
+    };
+
+    call.send(JSON.stringify({ query: userInput }));
+    }
+
   button.ontouchend = () => recognition.stop();
   recognition.onend = () => handleInput();
 
 } else {
   document.getElementById('output').textContent = "Speech recognition not supported in this browser.";
 }
-
-
-// hold voice until text is recorded
-// sent text to anthropic? to get it back in json form, action, name, amount
-// call Locus with json response to move money
